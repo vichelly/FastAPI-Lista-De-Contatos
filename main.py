@@ -1,12 +1,16 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-
 """
 para rodar vscode
 pip install --user fastapi uvicorn  
-pip install basemodel
+pip install pydantic
 python -m uvicorn main:app --reload
+py -m uvicorn main:app --reload
+"""
+"""
+http://localhost:8000/
+http://localhost:8000/docs
 """
 
 app = FastAPI()
@@ -17,11 +21,9 @@ class Contato(BaseModel):
     name: str
     num: int
 
-
 @app.get("/")
 def root():
     return contatos
-
 
 @app.get("/contatos/{name}")
 def get_contato(name: str):
@@ -30,7 +32,6 @@ def get_contato(name: str):
             return i
     else:
         return None
-
 
 @app.post("/adicionar/")
 def criar_contato(contato: Contato):
@@ -45,13 +46,20 @@ def deletar_contato(name: str):
         else:
             return None
     
-@app.put("/alterar/{name}/{num}")
-def alterar_contato(name: str):
+@app.put("/alterar-numero/{name}/{num}")
+def alterar_numero(name: str, num:int):
     for i in contatos:
-        if i.name  == name:
-            return contatos
-        else:
-            return None
-""" 
-    tarefas[pos].feito = True
-    return tarefas[pos] """
+        if i.name == name:
+            i.num = num
+    return None
+
+@app.put("/alterar-nome/{num}/{name}")
+def alterar_nome(name: str, num:int):
+    for i in contatos:
+        if i.num == num:
+            i.name = name
+    return None
+
+@app.get("/lista")
+def lista():
+    return contatos
